@@ -6,10 +6,12 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
+import controller.NotepadController;
 import model.NotepadModel;
 
 import java.awt.BorderLayout;
 import javax.swing.JTextArea;
+import javax.swing.KeyStroke;
 import javax.swing.UIManager;
 import javax.swing.JMenuBar;
 import javax.swing.JMenu;
@@ -17,13 +19,33 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JCheckBoxMenuItem;
 import java.awt.Toolkit;
+import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
+
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 
-public class NodepadView extends JFrame {
+public class NotepadView extends JFrame {
 
 	private JPanel contentPane;
-	private NotepadModel notepadModel;
+	public NotepadModel notepadModel;
+	private JMenuItem menuItemSave;
+	public JTextArea textArea;
+	private JMenuItem menuItemOpen;
+	private JMenuItem menuItemSaveAs;
+
+	public JMenuItem getMenuItemSave() {
+		return this.menuItemSave;
+	}
+	
+	public JMenuItem getMenuItemOpen() {
+		return this.menuItemOpen;
+	}
+	
+	public JMenuItem getMenuItemSaveAs() {
+		return this.menuItemSaveAs;
+	}
 
 	/**
 	 * Launch the application.
@@ -33,7 +55,7 @@ public class NodepadView extends JFrame {
 			public void run() {
 				try {
 					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-					NodepadView frame = new NodepadView();
+					NotepadView frame = new NotepadView();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -45,15 +67,19 @@ public class NodepadView extends JFrame {
 	/**
 	 * Create the frame.
 	 */
-	public NodepadView() {
+	public NotepadView() {
+		this.notepadModel = new NotepadModel();
 		setIconImage(Toolkit.getDefaultToolkit().getImage("E:\\Workspace\\java\\onTapJavaSwing\\JAppProject\\src\\view\\notepad-icon.png"));
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(800, 600);
 		setLocationRelativeTo(null);
+		setTitle("Untitled - Notepad");
 		contentPane = new JPanel();
 
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
+		
+		ActionListener nodepadController = new NotepadController(this);
 		
 		JMenuBar menuBar = new JMenuBar();
 		contentPane.add(menuBar, BorderLayout.NORTH);
@@ -61,19 +87,27 @@ public class NodepadView extends JFrame {
 		JMenu MenuFile = new JMenu("File");
 		menuBar.add(MenuFile);
 		
-		JMenuItem menuItemNew = new JMenuItem("New");
+		JMenuItem menuItemNew = new JMenuItem("New", KeyEvent.VK_N);
+		menuItemNew.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK));;
 		MenuFile.add(menuItemNew);
 		
-		JMenuItem menuItemNewWindow = new JMenuItem("New Window");
+		JMenuItem menuItemNewWindow = new JMenuItem("New Window", KeyEvent.VK_N);
+		menuItemNewWindow.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, InputEvent.CTRL_DOWN_MASK+InputEvent.SHIFT_DOWN_MASK));
 		MenuFile.add(menuItemNewWindow);
 		
-		JMenuItem menuItemOpen = new JMenuItem("Open...");
+		menuItemOpen = new JMenuItem("Open...", KeyEvent.VK_O);
+		menuItemOpen.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, InputEvent.CTRL_DOWN_MASK));
+		menuItemOpen.addActionListener(nodepadController);
 		MenuFile.add(menuItemOpen);
 		
-		JMenuItem menuItemSave = new JMenuItem("Save");
+		menuItemSave = new JMenuItem("Save", KeyEvent.VK_S);
+		menuItemSave.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK));
+		menuItemSave.addActionListener(nodepadController);
 		MenuFile.add(menuItemSave);
 		
-		JMenuItem menuItemSaveAs = new JMenuItem("Save As...");
+		menuItemSaveAs = new JMenuItem("Save As...", KeyEvent.VK_S);
+		menuItemSaveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK + InputEvent.SHIFT_DOWN_MASK));
+		menuItemSaveAs.addActionListener(nodepadController);
 		MenuFile.add(menuItemSaveAs);
 		
 		JSeparator separator = new JSeparator();
@@ -82,7 +116,8 @@ public class NodepadView extends JFrame {
 		JMenuItem menuItemPageSetup = new JMenuItem("Page Setup...");
 		MenuFile.add(menuItemPageSetup);
 		
-		JMenuItem menuItemPrint = new JMenuItem("Print...");
+		JMenuItem menuItemPrint = new JMenuItem("Print...", KeyEvent.VK_P);
+		menuItemPrint.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, InputEvent.CTRL_DOWN_MASK));
 		MenuFile.add(menuItemPrint);
 		
 		JSeparator separator_1 = new JSeparator();
@@ -94,22 +129,27 @@ public class NodepadView extends JFrame {
 		JMenu menuEdit = new JMenu("Edit");
 		menuBar.add(menuEdit);
 		
-		JMenuItem menuItemUndo = new JMenuItem("Undo");
+		JMenuItem menuItemUndo = new JMenuItem("Undo", KeyEvent.VK_Z);
+		menuItemUndo.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Z, InputEvent.CTRL_DOWN_MASK));
 		menuEdit.add(menuItemUndo);
 		
 		JSeparator separator_2 = new JSeparator();
 		menuEdit.add(separator_2);
 		
-		JMenuItem menuItemCut = new JMenuItem("Cut");
+		JMenuItem menuItemCut = new JMenuItem("Cut", KeyEvent.VK_X);
+		menuItemCut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_X, InputEvent.CTRL_DOWN_MASK));
 		menuEdit.add(menuItemCut);
 		
-		JMenuItem menuItemCopy = new JMenuItem("Copy");
+		JMenuItem menuItemCopy = new JMenuItem("Copy", KeyEvent.VK_C);
+		menuItemCopy.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_C, InputEvent.CTRL_DOWN_MASK));
 		menuEdit.add(menuItemCopy);
 		
-		JMenuItem menuItemPaste = new JMenuItem("Paste");
+		JMenuItem menuItemPaste = new JMenuItem("Paste", KeyEvent.VK_V);
+		menuItemPaste.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_V, InputEvent.CTRL_DOWN_MASK));
 		menuEdit.add(menuItemPaste);
 		
-		JMenuItem menuItemDelete = new JMenuItem("Delete");
+		JMenuItem menuItemDelete = new JMenuItem("Delete", KeyEvent.VK_DELETE);
+		menuItemDelete.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0));
 		menuEdit.add(menuItemDelete);
 		
 		JSeparator separator_3 = new JSeparator();
@@ -189,7 +229,7 @@ public class NodepadView extends JFrame {
 		JScrollPane scrollPane = new JScrollPane();
 		contentPane.add(scrollPane, BorderLayout.CENTER);
 		
-		JTextArea textArea = new JTextArea();
+		textArea = new JTextArea();
 		contentPane.add(textArea, BorderLayout.CENTER);
 	}
 

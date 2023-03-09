@@ -4,11 +4,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import view.JAppView;
-import view.NodepadView;
+import view.NotepadView;
 
 public class JAppController implements ActionListener {
 	private JAppView jAppView;
-	private NodepadView notepadView;
+	private NotepadView notepadView;
 	
 	public JAppController(JAppView jAppView) {
 		this.jAppView = jAppView;
